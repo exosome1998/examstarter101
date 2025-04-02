@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Interactive Exam</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .question {
+            margin-bottom: 20px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0px 1px 3px rgba(0,0,0,0.1);
+        }
+        .timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #d9534f;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #0275d8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #025aa5;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Exam</h1>
+    <p>Please answer the following questions. Your exam is timed.</p>
+
+    <!-- Timer Display -->
+    <div class="timer" id="timer">Time remaining: 60 seconds</div>
+
+    <!-- Question 1: Multiple Choice -->
+    <div class="question">
+        <h2>Question 1: What is the output of <code>print(2 + 2)</code>?</h2>
+        <form id="question1">
+            <input type="radio" id="q1_opt1" name="q1" value="3" required>
+            <label for="q1_opt1">3</label><br>
+            <input type="radio" id="q1_opt2" name="q1" value="4">
+            <label for="q1_opt2">4</label><br>
+            <input type="radio" id="q1_opt3" name="q1" value="5">
+            <label for="q1_opt3">5</label><br>
+            <input type="radio" id="q1_opt4" name="q1" value="22">
+            <label for="q1_opt4">22</label><br>
+        </form>
+    </div>
+
+    <!-- Question 2: Short Answer -->
+    <div class="question">
+        <h2>Question 2: Write a Python statement to print "Hello, World!"</h2>
+        <textarea id="q2" rows="4" cols="50" placeholder="Type your answer here" required></textarea>
+    </div>
+
+    <!-- Submit Button -->
+    <button onclick="submitExam()">Submit Exam</button>
+
+    <script>
+        // Timer Countdown (60 seconds)
+        let timeLeft = 60;
+        const timerElement = document.getElementById("timer");
+        const timerInterval = setInterval(function(){
+            if(timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerElement.textContent = "Time is up!";
+            } else {
+                timerElement.textContent = "Time remaining: " + timeLeft + " seconds";
+            }
+            timeLeft--;
+        }, 1000);
+
+        // Function to submit the exam
+        function submitExam() {
+            // Stop the timer if it's still running
+            clearInterval(timerInterval);
+
+            // Retrieve the answer for Question 1
+            let q1Elements = document.getElementsByName("q1");
+            let q1Answer = "";
+            for (let i = 0; i < q1Elements.length; i++) {
+                if(q1Elements[i].checked) {
+                    q1Answer = q1Elements[i].value;
+                    break;
+                }
+            }
+
+            // Retrieve the answer for Question 2
+            let q2Answer = document.getElementById("q2").value;
+
+            // Ensure both questions are answered
+            if(q1Answer === "" || q2Answer.trim() === "") {
+                alert("Please answer all questions before submitting.");
+                return;
+            }
+
+            // Create submission text
+            let submissionText = "Exam Submission:\n";
+            submissionText += "Question 1 Answer: " + q1Answer + "\n";
+            submissionText += "Question 2 Answer: " + q2Answer + "\n";
+
+            // For demonstration, display an alert with the submission details
+            alert("Exam Submitted!\n\n" + submissionText);
+
+            // Automatically download the submission as a text file
+            let blob = new Blob([submissionText], {type: "text/plain;charset=utf-8"});
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "exam_submission.txt";
+            link.click();
+        }
+    </script>
+</body>
+</html>
